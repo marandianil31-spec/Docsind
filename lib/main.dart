@@ -1,121 +1,375 @@
-import 'package:material_ui/material_ui.dart';
+
+import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const DocuMasterApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+const Color primaryBlue = Color(0xFF1769E8);
+const Color lightBlue = Color(0xFFEAF2FF);
 
-  // This widget is the root of your application.
+class DocuMasterApp extends StatelessWidget {
+  const DocuMasterApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'DocuMaster',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: primaryBlue,
+        ),
+        scaffoldBackgroundColor: const Color(0xFFF7F9FD),
+        fontFamily: 'Roboto',
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MainScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _MainScreenState extends State<MainScreen> {
+  int selectedIndex = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+  final List<Widget> pages = const [
+    HomeScreen(),
+    MyFilesScreen(),
+    PremiumScreen(),
+    SettingsScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: pages,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: .center,
-          children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: selectedIndex,
+        onDestinationSelected: (index) {
+          setState(() => selectedIndex = index);
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.folder_outlined),
+            selectedIcon: Icon(Icons.folder),
+            label: 'My Files',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.workspace_premium_outlined),
+            selectedIcon: Icon(Icons.workspace_premium),
+            label: 'Premium',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  final List<Map<String, dynamic>> tools = const [
+    {'name': 'Image to PDF', 'icon': Icons.image, 'color': Color(0xFF2878E8)},
+    {'name': 'PDF Merge', 'icon': Icons.merge_type, 'color': Color(0xFF8B5CF6)},
+    {'name': 'PDF Split', 'icon': Icons.call_split, 'color': Color(0xFF00A88F)},
+    {'name': 'PDF Compress', 'icon': Icons.compress, 'color': Color(0xFFE58B24)},
+    {'name': 'Photo Compress', 'icon': Icons.photo_size_select_small, 'color': Color(0xFFE05B79)},
+    {'name': 'Image Converter', 'icon': Icons.transform, 'color': Color(0xFF3986A8)},
+    {'name': 'Document Scanner', 'icon': Icons.document_scanner, 'color': Color(0xFF5C70D6)},
+    {'name': 'Signature Maker', 'icon': Icons.draw, 'color': Color(0xFF159C79)},
+    {'name': 'Passport Photo', 'icon': Icons.portrait, 'color': Color(0xFFB56A38)},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(11),
+                    decoration: BoxDecoration(
+                      color: primaryBlue,
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: const Icon(
+                      Icons.description_rounded,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DocuMaster',
+                          style: TextStyle(
+                            fontSize: 23,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          'Your all-in-one document toolkit',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const CircleAvatar(
+                    backgroundColor: lightBlue,
+                    child: Icon(Icons.person_outline, color: primaryBlue),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+            sliver: SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.all(21),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF1769E8), Color(0xFF5599F5)],
+                  ),
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Your Documents,',
+                      style: TextStyle(color: Colors.white70, fontSize: 15),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Simplified.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 29,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 9),
+                    Text(
+                      'Create, convert and manage documents easily.',
+                      style: TextStyle(color: Colors.white, fontSize: 13),
+                    ),
+                    SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Icon(Icons.offline_bolt, color: Colors.white, size: 19),
+                        SizedBox(width: 7),
+                        Text(
+                          'Document tools designed for offline use',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            sliver: SliverToBoxAdapter(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'All Tools',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    '${tools.length} tools',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 15, 16, 25),
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final tool = tools[index];
+                  final Color color = tool['color'] as Color;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    onTap: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${tool['name']} feature will be added next.',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: const Color(0xFFE9EDF4)),
+                      ),
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: color.withValues(alpha: 0.10),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Icon(
+                              tool['icon'] as IconData,
+                              color: color,
+                              size: 29,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            tool['name'] as String,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                childCount: tools.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisSpacing: 12,
+                crossAxisSpacing: 12,
+                childAspectRatio: 1.25,
+              ),
+            ),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+    );
+  }
+}
+
+class MyFilesScreen extends StatelessWidget {
+  const MyFilesScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SimplePage(
+      icon: Icons.folder_open,
+      title: 'My Files',
+      subtitle: 'Your processed documents will appear here.',
+    );
+  }
+}
+
+class PremiumScreen extends StatelessWidget {
+  const PremiumScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SimplePage(
+      icon: Icons.workspace_premium,
+      title: 'DocuMaster Premium',
+      subtitle: 'Unlock a better document experience. Premium plans coming soon.',
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SimplePage(
+      icon: Icons.settings,
+      title: 'Settings',
+      subtitle: 'Manage your app preferences.',
+    );
+  }
+}
+
+class SimplePage extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  const SimplePage({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: primaryBlue, size: 65),
+              const SizedBox(height: 18),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                subtitle,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
