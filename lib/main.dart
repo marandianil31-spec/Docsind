@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/image_to_pdf_screen.dart';
+import 'screens/pdf_merge_screen.dart';
 
 void main() {
   runApp(const DocuMasterApp());
@@ -31,6 +32,8 @@ class DocuMasterApp extends StatelessWidget {
     );
   }
 }
+
+// MAIN SCREEN
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -160,6 +163,13 @@ class HomeScreen extends StatelessWidget {
           builder: (context) => const ImageToPdfScreen(),
         ),
       );
+    } else if (name == 'PDF Merge') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const PdfMergeScreen(),
+        ),
+      );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -284,7 +294,10 @@ class HomeScreen extends StatelessWidget {
                   return InkWell(
                     borderRadius: BorderRadius.circular(18),
                     onTap: () {
-                      openTool(context, tool['name'] as String);
+                      openTool(
+                        context,
+                        tool['name'] as String,
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(15),
@@ -480,8 +493,8 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: [
-          const ListTile(
+        children: const [
+          ListTile(
             leading: Icon(
               Icons.info_outline,
               color: Color(0xFF1769E0),
@@ -489,8 +502,8 @@ class SettingsScreen extends StatelessWidget {
             title: Text('About DocuMaster'),
             subtitle: Text('Your document toolkit'),
           ),
-          const Divider(),
-          const ListTile(
+          Divider(),
+          ListTile(
             leading: Icon(
               Icons.privacy_tip_outlined,
               color: Color(0xFF1769E0),
@@ -498,8 +511,8 @@ class SettingsScreen extends StatelessWidget {
             title: Text('Privacy Policy'),
             subtitle: Text('Privacy information coming soon'),
           ),
-          const Divider(),
-          const ListTile(
+          Divider(),
+          ListTile(
             leading: Icon(
               Icons.star_outline,
               color: Color(0xFF1769E0),
@@ -507,8 +520,8 @@ class SettingsScreen extends StatelessWidget {
             title: Text('Rate App'),
             subtitle: Text('Coming soon'),
           ),
-          const Divider(),
-          const ListTile(
+          Divider(),
+          ListTile(
             leading: Icon(
               Icons.info,
               color: Color(0xFF1769E0),
