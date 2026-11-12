@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cross_file/cross_file.dart';
-
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 class ImageToPdfScreen extends StatefulWidget {
   const ImageToPdfScreen({super.key});
 
