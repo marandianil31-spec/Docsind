@@ -1,3 +1,4 @@
+
 name: DocuMaster Android APK Build
 
 on:
@@ -55,6 +56,21 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
+
+      - name: Disable problematic Android Lint tasks
+        run: |
+          PLUGIN_DIR="$HOME/.pub-cache/hosted/pub.dev"
+          find "$PLUGIN_DIR" -path "*/image_picker_android-*/android/build.gradle" -print -exec sh -c '
+            cat >> "$1" <<EOF
+
+          // CI workaround for Android Lint detector crash
+          tasks.configureEach {
+              if (name == "lintVitalAnalyzeRelease" || name == "lintAnalyzeRelease") {
+                  enabled = false
+              }
+          }
+          EOF
+          ' _ {} \;
 
       - name: Build Release APK
         run: flutter build apk --release
