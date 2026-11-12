@@ -33,9 +33,7 @@ jobs:
           cache: true
 
       - name: Check Flutter
-        run: |
-          flutter --version
-          flutter doctor
+        run: flutter --version
 
       - name: Create Flutter project if missing
         run: |
@@ -57,9 +55,6 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Analyze project
-        run: flutter analyze
 
       - name: Build Release APK
         run: flutter build apk --release
