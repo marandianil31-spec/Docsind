@@ -1,9 +1,14 @@
+
 import 'package:flutter/material.dart';
 
 import 'screens/image_to_pdf_screen.dart';
 import 'screens/pdf_merge_screen.dart';
 import 'screens/pdf_split_screen.dart';
 import 'screens/pdf_compress_screen.dart';
+import 'screens/photo_compress_screen.dart';
+import 'screens/image_converter_screen.dart';
+import 'screens/document_scanner_screen.dart';
+import 'screens/signature_maker_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -168,6 +173,22 @@ class HomeScreen extends StatelessWidget {
         screen = const PdfCompressScreen();
         break;
 
+      case 'Photo Compress':
+        screen = const PhotoCompressScreen();
+        break;
+
+      case 'Image Converter':
+        screen = const ImageConverterScreen();
+        break;
+
+      case 'Document Scanner':
+        screen = const DocumentScannerScreen();
+        break;
+
+      case 'Signature Maker':
+        screen = const SignatureMakerScreen();
+        break;
+
       default:
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -260,9 +281,7 @@ class HomeScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               const SizedBox(height: 26),
-
               const Text(
                 'All Tools',
                 style: TextStyle(
@@ -271,9 +290,7 @@ class HomeScreen extends StatelessWidget {
                   color: Color(0xFF172B4D),
                 ),
               ),
-
               const SizedBox(height: 5),
-
               Text(
                 'Choose a tool to get started',
                 style: TextStyle(
@@ -281,9 +298,7 @@ class HomeScreen extends StatelessWidget {
                   fontSize: 13,
                 ),
               ),
-
               const SizedBox(height: 16),
-
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -311,9 +326,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 },
               ),
-
               const SizedBox(height: 20),
-
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(17),
@@ -564,4 +577,3 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-
