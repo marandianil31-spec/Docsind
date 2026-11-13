@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'screens/image_to_pdf_screen.dart';
@@ -9,6 +8,7 @@ import 'screens/photo_compress_screen.dart';
 import 'screens/image_converter_screen.dart';
 import 'screens/document_scanner_screen.dart';
 import 'screens/signature_maker_screen.dart';
+import 'screens/passport_photo_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -187,6 +187,10 @@ class HomeScreen extends StatelessWidget {
 
       case 'Signature Maker':
         screen = const SignatureMakerScreen();
+        break;
+
+      case 'Passport Photo':
+        screen = const PassportPhotoScreen();
         break;
 
       default:
@@ -577,3 +581,4 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
+
