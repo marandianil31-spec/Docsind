@@ -1,5 +1,5 @@
 
-name: DocuMaster Android APK Build
+name: DocsIND Android APK Build
 
 on:
   workflow_dispatch:
@@ -8,96 +8,75 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
-    name: Build DocuMaster APK
+    name: Build DocsIND APK
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      # 1. Checkout Repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
+      # 2. Setup Java
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
+      # 3. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
+      # 4. Check Flutter
       - name: Check Flutter
         run: flutter --version
 
-      - name: Create Flutter project if missing
+      # 5. Check Project
+      - name: Check Flutter Project
         run: |
           if [ ! -f pubspec.yaml ]; then
-            flutter create --project-name documaster --org com.documaster .
-          fi
-
-      - name: Repair Android project if needed
-        run: |
-          if [ ! -f android/gradlew ]; then
-            flutter create --platforms=android .
-          fi
-
-          if [ ! -f android/gradlew ]; then
-            echo "ERROR: Android Gradle Wrapper is missing"
+            echo "pubspec.yaml not found!"
             exit 1
           fi
 
-      - name: Save generated files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          if ! git diff --cached --quiet; then
-            git commit -m "Repair Android project files"
-            git pull --rebase origin main
-            git push origin HEAD:main
+          if [ ! -d android ]; then
+            flutter create --platforms=android --project-name docsind .
           fi
 
-      - name: Install dependencies
+      # 6. Install Dependencies
+      - name: Install Dependencies
         run: flutter pub get
 
-      - name: Configure Gradle Lint workaround
-        run: |
-          mkdir -p "$HOME/.gradle/init.d"
+      # 7. Generate App Icon
+      - name: Generate App Icon
+        run: dart run flutter_launcher_icons
 
-          cat > "$HOME/.gradle/init.d/disable-image-picker-lint.gradle" <<'EOF'
-          gradle.projectsEvaluated {
-              gradle.rootProject.allprojects { p ->
-                  if (p.name == "image_picker_android") {
-                      p.tasks.matching {
-                          it.name == "lintVitalAnalyzeRelease" ||
-                          it.name == "lintAnalyzeRelease"
-                      }.configureEach {
-                          enabled = false
-                      }
-                  }
-              }
-          }
-          EOF
+      # 8. Generate Splash Screen
+      - name: Generate Splash Screen
+        run: dart run flutter_native_splash:create
 
+      # 9. Build Release APK
       - name: Build Release APK
         run: flutter build apk --release
 
+      # 10. Check APK
       - name: Check APK
         run: |
           ls -lh build/app/outputs/flutter-apk/
           test -f build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Upload APK
+      # 11. Upload APK
+      - name: Upload DocsIND APK
         uses: actions/upload-artifact@v4
         with:
-          name: DocuMaster-APK
+          name: DocsIND-APK
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           
