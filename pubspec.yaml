@@ -36,5 +36,5 @@ flutter:
   uses-material-design: true
 
 dependency_overrides:
-  archive: 4.0.8
+  archive: 4.4.0
   
