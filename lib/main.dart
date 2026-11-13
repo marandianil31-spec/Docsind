@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'screens/image_to_pdf_screen.dart';
 import 'screens/pdf_merge_screen.dart';
 import 'screens/pdf_split_screen.dart';
+import 'screens/pdf_compress_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,13 +22,13 @@ class DocuMasterApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1769E0),
+          seedColor: const Color(0xFF2457C5),
           brightness: Brightness.light,
         ),
         scaffoldBackgroundColor: const Color(0xFFF5F8FF),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          foregroundColor: Color(0xFF172B4D),
+          foregroundColor: Color(0xFF1746A2),
           elevation: 0,
           centerTitle: false,
         ),
@@ -69,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
         backgroundColor: Colors.white,
-        indicatorColor: const Color(0xFFDCEAFF),
+        indicatorColor: const Color(0xFFDCE8FF),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
@@ -97,65 +98,54 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-// HOME SCREEN
-
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  static const List<Map<String, dynamic>> tools = [
+  final List<Map<String, dynamic>> tools = const [
     {
       'name': 'Image to PDF',
-      'subtitle': 'Convert photos into PDF',
       'icon': Icons.image,
-      'color': Color(0xFF1769E0),
+      'color': Color(0xFF3975E8),
     },
     {
       'name': 'PDF Merge',
-      'subtitle': 'Combine multiple PDFs',
       'icon': Icons.merge_type,
-      'color': Color(0xFFE53935),
+      'color': Color(0xFF7C4DCE),
     },
     {
       'name': 'PDF Split',
-      'subtitle': 'Separate PDF pages',
       'icon': Icons.call_split,
-      'color': Color(0xFF8E44AD),
+      'color': Color(0xFFE58A35),
     },
     {
       'name': 'PDF Compress',
-      'subtitle': 'Reduce PDF file size',
       'icon': Icons.compress,
-      'color': Color(0xFF00897B),
+      'color': Color(0xFF16A085),
     },
     {
       'name': 'Photo Compress',
-      'subtitle': 'Reduce photo size',
       'icon': Icons.photo_size_select_small,
-      'color': Color(0xFFF57C00),
+      'color': Color(0xFFDB6090),
     },
     {
       'name': 'Image Converter',
-      'subtitle': 'Convert image formats',
       'icon': Icons.transform,
-      'color': Color(0xFF3949AB),
+      'color': Color(0xFF008FA8),
     },
     {
       'name': 'Document Scanner',
-      'subtitle': 'Scan documents',
       'icon': Icons.document_scanner,
-      'color': Color(0xFF0097A7),
+      'color': Color(0xFF5969C9),
     },
     {
       'name': 'Signature Maker',
-      'subtitle': 'Create your signature',
       'icon': Icons.draw,
-      'color': Color(0xFF6D4C41),
+      'color': Color(0xFF9B6BC4),
     },
     {
       'name': 'Passport Photo',
-      'subtitle': 'Create passport photos',
       'icon': Icons.portrait,
-      'color': Color(0xFF7B1FA2),
+      'color': Color(0xFFCE8140),
     },
   ];
 
@@ -173,6 +163,10 @@ class HomeScreen extends StatelessWidget {
 
       case 'PDF Split':
         screen = const PdfSplitScreen();
+        break;
+
+      case 'PDF Compress':
+        screen = const PdfCompressScreen();
         break;
 
       default:
@@ -196,34 +190,31 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Row(
-          children: [
-            Icon(
-              Icons.description,
-              color: Color(0xFF1769E0),
-              size: 28,
-            ),
-            SizedBox(width: 9),
-            Text(
-              'DocuMaster',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
-            ),
-          ],
+        title: const Text(
+          'DocuMaster',
+          style: TextStyle(
+            fontSize: 23,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF1746A2),
+          ),
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Notifications coming soon.'),
+                ),
+              );
+            },
             icon: const Icon(Icons.notifications_none),
           ),
-          const SizedBox(width: 5),
+          const SizedBox(width: 8),
         ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -233,8 +224,8 @@ class HomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [
-                      Color(0xFF1769E0),
-                      Color(0xFF4895FF),
+                      Color(0xFF1746A2),
+                      Color(0xFF3975E8),
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -244,39 +235,39 @@ class HomeScreen extends StatelessWidget {
                 child: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Icon(
+                      Icons.picture_as_pdf,
+                      color: Colors.white,
+                      size: 38,
+                    ),
+                    SizedBox(height: 14),
                     Text(
-                      'All Documents.\nOne Simple App.',
+                      'All Document Tools\nIn One Place',
                       style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 24,
                         height: 1.3,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10),
+                    SizedBox(height: 8),
                     Text(
                       'Manage, convert and organize your documents easily.',
                       style: TextStyle(
-                        color: Colors.white,
                         fontSize: 13,
+                        color: Colors.white,
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    Icon(
-                      Icons.picture_as_pdf,
-                      size: 42,
-                      color: Colors.white,
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 25),
+              const SizedBox(height: 26),
 
               const Text(
                 'All Tools',
                 style: TextStyle(
-                  fontSize: 21,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF172B4D),
                 ),
@@ -284,15 +275,15 @@ class HomeScreen extends StatelessWidget {
 
               const SizedBox(height: 5),
 
-              const Text(
+              Text(
                 'Choose a tool to get started',
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: Colors.blueGrey.shade600,
                   fontSize: 13,
                 ),
               ),
 
-              const SizedBox(height: 17),
+              const SizedBox(height: 16),
 
               GridView.builder(
                 shrinkWrap: true,
@@ -301,84 +292,69 @@ class HomeScreen extends StatelessWidget {
                 gridDelegate:
                     const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 13,
-                  mainAxisSpacing: 13,
+                  crossAxisSpacing: 14,
+                  mainAxisSpacing: 14,
                   childAspectRatio: 1.12,
                 ),
                 itemBuilder: (context, index) {
                   final tool = tools[index];
 
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(17),
+                  return ToolCard(
+                    name: tool['name'] as String,
+                    icon: tool['icon'] as IconData,
+                    color: tool['color'] as Color,
                     onTap: () {
                       openTool(
                         context,
                         tool['name'] as String,
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(17),
-                        border: Border.all(
-                          color: const Color(0xFFE7ECF5),
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x08000000),
-                            blurRadius: 8,
-                            offset: Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            width: 47,
-                            height: 47,
-                            decoration: BoxDecoration(
-                              color: (tool['color'] as Color)
-                                  .withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(13),
-                            ),
-                            child: Icon(
-                              tool['icon'] as IconData,
-                              color: tool['color'] as Color,
-                              size: 25,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            tool['name'] as String,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF172B4D),
-                            ),
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            tool['subtitle'] as String,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   );
                 },
               ),
 
               const SizedBox(height: 20),
+
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(17),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(
+                      Icons.lock_outline,
+                      color: Color(0xFF2457C5),
+                      size: 28,
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Your Documents, Your Control',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Document processing is designed to happen locally on your device.',
+                            style: TextStyle(
+                              color: Colors.blueGrey,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -387,75 +363,125 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-// MY FILES SCREEN
+class ToolCard extends StatelessWidget {
+  final String name;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const ToolCard({
+    super.key,
+    required this.name,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(18),
+        child: Container(
+          padding: const EdgeInsets.all(15),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: const Color(0xFFE8EDF7),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                height: 54,
+                width: 54,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  icon,
+                  color: color,
+                  size: 29,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF24344D),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class MyFilesScreen extends StatelessWidget {
   const MyFilesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SimplePage(
-      title: 'My Files',
-      icon: Icons.folder_open,
-      message: 'Your saved documents will appear here.',
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'My Files',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: const Center(
+        child: Padding(
+          padding: EdgeInsets.all(25),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.folder_open,
+                size: 75,
+                color: Color(0xFF3975E8),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'My Files',
+                style: TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 8),
+              Text(
+                'Your saved documents will appear here. File library feature is coming next.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.blueGrey),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
-
-// PREMIUM SCREEN
 
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const SimplePage(
-      title: 'DocuMaster Premium',
-      icon: Icons.workspace_premium,
-      message: 'Premium features are coming soon.',
-    );
-  }
-}
-
-// SETTINGS SCREEN
-
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const SimplePage(
-      title: 'Settings',
-      icon: Icons.settings,
-      message: 'App settings will be available here.',
-    );
-  }
-}
-
-// COMMON PLACEHOLDER PAGE
-
-class SimplePage extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final String message;
-
-  const SimplePage({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.message,
-  });
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8FF),
       appBar: AppBar(
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+        title: const Text(
+          'Premium',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
       body: Center(
@@ -464,31 +490,77 @@ class SimplePage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 65,
-                color: const Color(0xFF1769E0),
+              const Icon(
+                Icons.workspace_premium,
+                size: 80,
+                color: Color(0xFFE5A52B),
               ),
               const SizedBox(height: 18),
-              Text(
-                title,
-                style: const TextStyle(
+              const Text(
+                'DocuMaster Premium',
+                style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
-                message,
+                'Premium plans and additional benefits will be available here.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 14,
+                style: TextStyle(
+                  color: Colors.blueGrey.shade600,
                 ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Settings',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const ListTile(
+            leading: Icon(
+              Icons.info_outline,
+              color: Color(0xFF2457C5),
+            ),
+            title: Text('About DocuMaster'),
+            subtitle: Text('Version 1.0.0'),
+          ),
+          const Divider(),
+          const ListTile(
+            leading: Icon(
+              Icons.privacy_tip_outlined,
+              color: Color(0xFF2457C5),
+            ),
+            title: Text('Privacy Policy'),
+            subtitle: Text('Privacy information coming soon.'),
+          ),
+          const Divider(),
+          const ListTile(
+            leading: Icon(
+              Icons.help_outline,
+              color: Color(0xFF2457C5),
+            ),
+            title: Text('Help & Support'),
+            subtitle: Text('Support information coming soon.'),
+          ),
+        ],
       ),
     );
   }
