@@ -1,3 +1,4 @@
+
 name: documaster
 description: DocuMaster PDF and Document Toolkit
 publish_to: 'none'
@@ -25,6 +26,12 @@ dependencies:
   # PDF Merge
   file_picker: ^10.3.7
   syncfusion_flutter_pdf: ^32.1.24
+
+  # Photo Compress
+  flutter_image_compress: ^2.5.1
+
+  # Document Scanner - Image Cropper
+  image_cropper: ^13.0.0
 
 dev_dependencies:
   flutter_test:
