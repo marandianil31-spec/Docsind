@@ -1,6 +1,6 @@
 
-name: documaster
-description: DocuMaster PDF and Document Toolkit
+name: docsIND
+description: DocsIND - PDF, Photo and Document Tools
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -19,19 +19,23 @@ dependencies:
   pdf: ^3.12.0
   path_provider: ^2.1.6
 
-  # Share PDF
+  # PDF Sharing
   share_plus: ^12.0.2
   cross_file: ^0.3.5
 
-  # PDF Merge
+  # PDF Merge and Split
   file_picker: ^10.3.7
   syncfusion_flutter_pdf: ^32.1.24
 
   # Photo Compress
   flutter_image_compress: ^2.5.1
 
-  # Document Scanner - Image Cropper
+  # Document Scanner
   image_cropper: ^13.0.0
+
+  # File Storage and History
+  file_saver: ^0.7.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:
@@ -39,9 +43,38 @@ dev_dependencies:
 
   flutter_lints: ^6.0.0
 
+  # App Icon Generator
+  flutter_launcher_icons: ^0.14.4
+
+  # Splash Screen Generator
+  flutter_native_splash: ^2.4.8
+
 flutter:
   uses-material-design: true
 
+  assets:
+    - assets/app_icon.png
+    - assets/splash_logo.png
+
+# App Launcher Icon
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+
+# Splash Screen
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/splash/splash_logo.png
+  android: true
+  ios: false
+
+  android_12:
+    color: "#FFFFFF"
+    image: assets/splash/splash_logo.png
+
+# Dependency Override
 dependency_overrides:
   archive: 4.4.0
   
