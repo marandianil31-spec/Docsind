@@ -26,6 +26,7 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
         type: FileType.custom,
         allowedExtensions: ['pdf'],
         allowMultiple: true,
+        withData: false,
       );
 
       if (result == null) return;
@@ -34,18 +35,15 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
           .where((file) => file.path != null)
           .toList();
 
+      if (validFiles.isEmpty) {
+        showMessage('Could not access selected PDF files.');
+        return;
+      }
+
       setState(() {
         selectedFiles.addAll(validFiles);
         savedPdfPath = null;
       });
-
-      if (validFiles.isEmpty && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('PDF files could not be accessed.'),
-          ),
-        );
-      }
     } catch (e) {
       showMessage('File selection failed: $e');
     }
@@ -75,17 +73,36 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
       outputDocument = PdfDocument();
 
       for (final file in selectedFiles) {
-        final inputFile = File(file.path!);
+        final filePath = file.path;
+
+        if (filePath == null) {
+          throw Exception('Invalid file: ${file.name}');
+        }
+
+        final inputFile = File(filePath);
+
+        if (!await inputFile.exists()) {
+          throw Exception('File not found: ${file.name}');
+        }
+
         final bytes = await inputFile.readAsBytes();
 
-        final inputDocument = PdfDocument(inputBytes: bytes);
+        final inputDocument = PdfDocument(
+          inputBytes: bytes,
+        );
 
         try {
-          if (inputDocument.pages.count > 0) {
-            outputDocument.importPageRange(
-              inputDocument,
-              0,
-              inputDocument.pages.count - 1,
+          for (int i = 0; i < inputDocument.pages.count; i++) {
+            final sourcePage = inputDocument.pages[i];
+
+            final template = sourcePage.createTemplate();
+
+            final newPage = outputDocument.pages.add();
+
+            newPage.graphics.drawPdfTemplate(
+              template,
+              Offset.zero,
+              newPage.size,
             );
           }
         } finally {
@@ -94,12 +111,14 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
       }
 
       if (outputDocument.pages.count == 0) {
-        throw Exception('No PDF pages found.');
+        throw Exception('No pages found in selected PDFs.');
       }
 
       final outputBytes = await outputDocument.save();
 
-      final directory = await getApplicationDocumentsDirectory();
+      final directory =
+          await getApplicationDocumentsDirectory();
+
       final mergeFolder = Directory(
         '${directory.path}/DocuMaster',
       );
@@ -115,7 +134,10 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
         '${mergeFolder.path}/$fileName',
       );
 
-      await outputFile.writeAsBytes(outputBytes, flush: true);
+      await outputFile.writeAsBytes(
+        outputBytes,
+        flush: true,
+      );
 
       if (!mounted) return;
 
@@ -143,7 +165,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
     try {
       await SharePlus.instance.share(
         ShareParams(
-          files: [XFile(savedPdfPath!)],
+          files: [
+            XFile(savedPdfPath!),
+          ],
           text: 'Merged PDF - DocuMaster',
         ),
       );
@@ -156,7 +180,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(
+        content: Text(message),
+      ),
     );
   }
 
@@ -167,7 +193,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
       appBar: AppBar(
         title: const Text(
           'PDF Merge',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SafeArea(
@@ -207,7 +235,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                             'Select multiple PDFs and combine them '
                             'into one document.',
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.black54),
+                            style: TextStyle(
+                              color: Colors.black54,
+                            ),
                           ),
                         ],
                       ),
@@ -216,7 +246,8 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                     const SizedBox(height: 22),
 
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
                           'Selected PDF Files',
@@ -258,7 +289,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                             SizedBox(height: 10),
                             Text(
                               'No PDF files selected',
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
                             ),
                           ],
                         ),
@@ -266,7 +299,8 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                     else
                       ReorderableListView.builder(
                         shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
+                        physics:
+                            const NeverScrollableScrollPhysics(),
                         itemCount: selectedFiles.length,
                         onReorder: (oldIndex, newIndex) {
                           setState(() {
@@ -288,11 +322,14 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                             key: ValueKey(
                               '${file.path}-$index',
                             ),
-                            margin: const EdgeInsets.only(bottom: 10),
+                            margin: const EdgeInsets.only(
+                              bottom: 10,
+                            ),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(14),
+                              borderRadius:
+                                  BorderRadius.circular(14),
                               border: Border.all(
                                 color: const Color(0xFFE7ECF5),
                               ),
@@ -313,9 +350,11 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                                       Text(
                                         file.name,
                                         maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                        overflow:
+                                            TextOverflow.ellipsis,
                                         style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                          fontWeight:
+                                              FontWeight.bold,
                                         ),
                                       ),
                                       const SizedBox(height: 4),
@@ -330,7 +369,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () => removePdf(index),
+                                  onPressed: isMerging
+                                      ? null
+                                      : () => removePdf(index),
                                   icon: const Icon(
                                     Icons.delete_outline,
                                     color: Colors.red,
@@ -352,7 +393,8 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                       width: double.infinity,
                       height: 52,
                       child: OutlinedButton.icon(
-                        onPressed: isMerging ? null : pickPdfFiles,
+                        onPressed:
+                            isMerging ? null : pickPdfFiles,
                         icon: const Icon(Icons.add),
                         label: const Text('Add PDF Files'),
                       ),
@@ -403,7 +445,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                             )
                           : const Icon(Icons.merge_type),
                       label: Text(
-                        isMerging ? 'Merging...' : 'Merge PDF Files',
+                        isMerging
+                            ? 'Merging...'
+                            : 'Merge PDF Files',
                       ),
                     ),
                   ),
@@ -416,7 +460,9 @@ class _PdfMergeScreenState extends State<PdfMergeScreen> {
                       child: OutlinedButton.icon(
                         onPressed: shareMergedPdf,
                         icon: const Icon(Icons.share),
-                        label: const Text('Share Merged PDF'),
+                        label: const Text(
+                          'Share Merged PDF',
+                        ),
                       ),
                     ),
                   ],
