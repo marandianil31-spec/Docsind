@@ -1,5 +1,5 @@
 
-name: DocsIND Android APK Build
+name: Build DocsIND APK
 
 on:
   workflow_dispatch:
@@ -16,67 +16,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout Repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # 2. Setup Java
-      - name: Setup Java
+      - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
-      # 3. Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # 4. Check Flutter
-      - name: Check Flutter
+      - name: Check Flutter Version
         run: flutter --version
 
-      # 5. Check Project
-      - name: Check Flutter Project
-        run: |
-          if [ ! -f pubspec.yaml ]; then
-            echo "pubspec.yaml not found!"
-            exit 1
-          fi
+      - name: Check Java Version
+        run: java -version
 
-          if [ ! -d android ]; then
-            flutter create --platforms=android --project-name docsind .
-          fi
-
-      # 6. Install Dependencies
-      - name: Install Dependencies
+      - name: Get Flutter Dependencies
         run: flutter pub get
 
-      # 7. Generate App Icon
-      - name: Generate App Icon
+      - name: Generate App Launcher Icon
         run: dart run flutter_launcher_icons
 
-      # 8. Generate Splash Screen
-      - name: Generate Splash Screen
+      - name: Generate Native Splash Screen
         run: dart run flutter_native_splash:create
 
-      # 9. Build Release APK
       - name: Build Release APK
         run: flutter build apk --release
 
-      # 10. Check APK
       - name: Check APK
         run: |
           ls -lh build/app/outputs/flutter-apk/
           test -f build/app/outputs/flutter-apk/app-release.apk
 
-      # 11. Upload APK
       - name: Upload DocsIND APK
         uses: actions/upload-artifact@v4
         with:
-          name: DocsIND-APK
+          name: DocsIND-Release-APK
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
+          retention-days: 14
           
