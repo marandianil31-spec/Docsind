@@ -1,9 +1,11 @@
+
 package com.documaster.documaster
 
 import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Intent
 import android.net.Uri
+import android.webkit.MimeTypeMap
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -11,6 +13,21 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
 
     private val channelName = "com.docsind/file_actions"
+
+    private fun getMimeType(uri: Uri, suppliedType: String?): String {
+        if (!suppliedType.isNullOrBlank() && suppliedType != "*/*") {
+            return suppliedType
+        }
+
+        val contentType = contentResolver.getType(uri)
+        if (!contentType.isNullOrBlank()) {
+            return contentType
+        }
+
+        val extension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+        return MimeTypeMap.getSingleton()
+            .getMimeTypeFromExtension(extension.lowercase()) ?: "*/*"
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -20,11 +37,12 @@ class MainActivity : FlutterActivity() {
             channelName
         ).setMethodCallHandler { call, result ->
 
-            when (call.method) {
-                "openFile" -> {
-                    val uriString = call.argument<String>("uri")
-                    val mimeType = call.argument<String>("mimeType") ?: "*/*"
+            val uriString = call.argument<String>("uri")
+            val suppliedType = call.argument<String>("mimeType")
 
+            when (call.method) {
+
+                "openFile" -> {
                     if (uriString.isNullOrBlank()) {
                         result.error("INVALID_URI", "File URI missing", null)
                         return@setMethodCallHandler
@@ -32,26 +50,37 @@ class MainActivity : FlutterActivity() {
 
                     try {
                         val uri = Uri.parse(uriString)
+                        val mimeType = getMimeType(uri, suppliedType)
 
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             setDataAndType(uri, mimeType)
+                            addCategory(Intent.CATEGORY_DEFAULT)
                             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            clipData = ClipData.newUri(
+                                contentResolver,
+                                "DocsIND File",
+                                uri
+                            )
                         }
 
-                        startActivity(intent)
+                        startActivity(
+                            Intent.createChooser(intent, "Open file with")
+                        )
+
                         result.success(true)
 
                     } catch (e: ActivityNotFoundException) {
-                        result.error("NO_APP", "File open karne wala app nahi mila.", null)
+                        result.error(
+                            "NO_APP",
+                            "PDF ya Image open karne wala app nahi mila.",
+                            null
+                        )
                     } catch (e: Exception) {
                         result.error("OPEN_ERROR", e.message, null)
                     }
                 }
 
                 "shareFile" -> {
-                    val uriString = call.argument<String>("uri")
-                    val mimeType = call.argument<String>("mimeType") ?: "*/*"
-
                     if (uriString.isNullOrBlank()) {
                         result.error("INVALID_URI", "File URI missing", null)
                         return@setMethodCallHandler
@@ -59,6 +88,7 @@ class MainActivity : FlutterActivity() {
 
                     try {
                         val uri = Uri.parse(uriString)
+                        val mimeType = getMimeType(uri, suppliedType)
 
                         val intent = Intent(Intent.ACTION_SEND).apply {
                             type = mimeType
@@ -74,6 +104,7 @@ class MainActivity : FlutterActivity() {
                         startActivity(
                             Intent.createChooser(intent, "Share DocsIND File")
                         )
+
                         result.success(true)
 
                     } catch (e: Exception) {
@@ -86,4 +117,3 @@ class MainActivity : FlutterActivity() {
         }
     }
 }
-
