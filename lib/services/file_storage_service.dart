@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -5,7 +6,7 @@ import 'package:file_saver/file_saver.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FileStorageService {
-  static const String _historyKey = 'documaster_saved_files';
+  static const String _historyKey = 'docsind_saved_files';
 
   static Future<Map<String, dynamic>> saveFile({
     required File file,
@@ -25,8 +26,10 @@ class FileStorageService {
       throw Exception('File extension missing hai.');
     }
 
-    final cleanName =
-        fileName.replaceAll(RegExp(r'\.[^.]+$'), '');
+    final cleanName = fileName.replaceAll(
+      RegExp(r'\.[^.]+$'),
+      '',
+    );
 
     String? savedUri;
 
@@ -37,7 +40,7 @@ class FileStorageService {
         fileExtension: extension,
         mimeType: MimeType.custom,
         customMimeType: mimeType,
-        album: 'DocuMaster/$category',
+        album: 'DocsIND',
       );
     } else {
       savedUri = await FileSaver.instance.saveToDownloads(
@@ -46,11 +49,11 @@ class FileStorageService {
         fileExtension: extension,
         mimeType: MimeType.custom,
         customMimeType: mimeType,
-        subfolder: 'DocuMaster/$category',
+        subfolder: 'DocsIND',
       );
     }
 
-    if (savedUri == null) {
+    if (savedUri == null || savedUri.isEmpty) {
       throw Exception('Phone storage mein save nahi ho payi.');
     }
 
@@ -65,6 +68,16 @@ class FileStorageService {
 
     final prefs = await SharedPreferences.getInstance();
     final history = prefs.getStringList(_historyKey) ?? [];
+
+    // Prevent duplicate entries for the same saved URI.
+    history.removeWhere((item) {
+      try {
+        final data = jsonDecode(item);
+        return data is Map && data['uri'] == savedUri;
+      } catch (_) {
+        return false;
+      }
+    });
 
     history.insert(0, jsonEncode(record));
 
@@ -85,6 +98,7 @@ class FileStorageService {
     for (final item in history) {
       try {
         final decoded = jsonDecode(item);
+
         if (decoded is Map) {
           files.add(Map<String, dynamic>.from(decoded));
         }
@@ -103,7 +117,7 @@ class FileStorageService {
     history.removeWhere((item) {
       try {
         final data = jsonDecode(item);
-        return data['uri'] == uri;
+        return data is Map && data['uri'] == uri;
       } catch (_) {
         return false;
       }
@@ -112,4 +126,3 @@ class FileStorageService {
     await prefs.setStringList(_historyKey, history);
   }
 }
-
