@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import 'screens/image_to_pdf_screen.dart';
@@ -9,19 +10,20 @@ import 'screens/image_converter_screen.dart';
 import 'screens/document_scanner_screen.dart';
 import 'screens/signature_maker_screen.dart';
 import 'screens/passport_photo_screen.dart';
+import 'screens/my_files_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const DocuMasterApp());
+  runApp(const DocsINDApp());
 }
 
-class DocuMasterApp extends StatelessWidget {
-  const DocuMasterApp({super.key});
+class DocsINDApp extends StatelessWidget {
+  const DocsINDApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'DocuMaster',
+      title: 'DocsIND',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
@@ -215,7 +217,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'DocuMaster',
+          'DocsIND',
           style: TextStyle(
             fontSize: 23,
             fontWeight: FontWeight.bold,
@@ -443,51 +445,6 @@ class ToolCard extends StatelessWidget {
   }
 }
 
-class MyFilesScreen extends StatelessWidget {
-  const MyFilesScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'My Files',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(25),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.folder_open,
-                size: 75,
-                color: Color(0xFF3975E8),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'My Files',
-                style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 8),
-              Text(
-                'Your saved documents will appear here. File library feature is coming next.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.blueGrey),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class PremiumScreen extends StatelessWidget {
   const PremiumScreen({super.key});
 
@@ -513,7 +470,7 @@ class PremiumScreen extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               const Text(
-                'DocuMaster Premium',
+                'DocsIND Premium',
                 style: TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -555,7 +512,7 @@ class SettingsScreen extends StatelessWidget {
               Icons.info_outline,
               color: Color(0xFF2457C5),
             ),
-            title: Text('About DocuMaster'),
+            title: Text('About DocsIND'),
             subtitle: Text('Version 1.0.0'),
           ),
           const Divider(),
@@ -581,4 +538,3 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 }
-
