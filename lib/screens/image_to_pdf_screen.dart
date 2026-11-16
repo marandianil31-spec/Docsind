@@ -1,5 +1,6 @@
 
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pdf/pdf.dart';
@@ -7,7 +8,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:cross_file/cross_file.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
+
+import '../services/file_storage_service.dart';
+
 class ImageToPdfScreen extends StatefulWidget {
   const ImageToPdfScreen({super.key});
 
@@ -88,18 +91,31 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
         );
       }
 
+      // Create temporary PDF inside app storage.
       final directory = await getApplicationDocumentsDirectory();
-      final folder = Directory('${directory.path}/DocuMaster');
+      final folder = Directory('${directory.path}/DocsIND');
 
       if (!await folder.exists()) {
         await folder.create(recursive: true);
       }
 
       final fileName =
-          'DocuMaster_${DateTime.now().millisecondsSinceEpoch}.pdf';
+          'DocsIND_${DateTime.now().millisecondsSinceEpoch}.pdf';
 
       final file = File('${folder.path}/$fileName');
-      await file.writeAsBytes(await document.save());
+
+      await file.writeAsBytes(
+        await document.save(),
+        flush: true,
+      );
+
+      // Save PDF to Downloads and DocsIND My Files history.
+      await FileStorageService.saveFile(
+        file: file,
+        fileName: fileName,
+        category: 'Image to PDF',
+        mimeType: 'application/pdf',
+      );
 
       if (!mounted) return;
 
@@ -108,13 +124,17 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
         isCreating = false;
       });
 
-      showMessage('PDF successfully created!');
+      showMessage(
+        'PDF Downloads aur DocsIND My Files mein save ho gayi!',
+      );
     } catch (e) {
       if (!mounted) return;
+
       setState(() {
         isCreating = false;
       });
-      showMessage('PDF create nahi hua: $e');
+
+      showMessage('PDF save nahi hui: $e');
     }
   }
 
@@ -125,7 +145,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(pdfPath!)],
-          text: 'Created with DocuMaster',
+          text: 'Created with DocsIND',
         ),
       );
     } catch (e) {
@@ -387,7 +407,7 @@ class _ImageToPdfScreenState extends State<ImageToPdfScreen> {
                           SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Your PDF is ready!',
+                              'PDF saved to Downloads and My Files!',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
